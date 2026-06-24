@@ -1,0 +1,194 @@
+{
+  "uid": "techstock-rds",
+  "title": "TechStock — Banco de Dados (RDS + App)",
+  "tags": ["techstock", "rds", "postgres"],
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 2 },
+      "options": {
+        "mode": "markdown",
+        "content": "## 🗄️ Banco de Dados PostgreSQL — RDS\nMétricas do pool de conexões via **prom-client** no backend. Métricas nativas do RDS via **CloudWatch** (configurar datasource CloudWatch para dados completos)."
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Pool: Conexões Ativas",
+      "description": "Handles ativos incluem conexões PostgreSQL abertas",
+      "gridPos": { "x": 0, "y": 2, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "techstock_nodejs_active_handles",
+          "refId": "A",
+          "legendFormat": "Conexões ativas"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "area"
+      }
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Requisições DB — Taxa Sucesso",
+      "description": "Taxa de respostas 200 em rotas de API = queries bem-sucedidas",
+      "gridPos": { "x": 6, "y": 2, "w": 12, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(techstock_http_requests_total{status=\"200\",path=~\"/api/.*\"}[5m])",
+          "refId": "A",
+          "legendFormat": "Sucesso 200"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi" },
+        "legend": { "displayMode": "list" }
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Erros de DB (500s em /api)",
+      "description": "",
+      "gridPos": { "x": 18, "y": 2, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(techstock_http_requests_total{status=\"500\",path=~\"/api/.*\"}[5m])",
+          "refId": "A",
+          "legendFormat": "Erros 500"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 0.01 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "area"
+      }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Operações por Rota DB",
+      "description": "Volume de operações por rota: categorias, produtos, movimentos, stats",
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum by(path,method) (rate(techstock_http_requests_total{path=~\"/api/.*\",status=~\"2..\"}[5m]))",
+          "refId": "A",
+          "legendFormat": "{{method}} {{path}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi" },
+        "legend": { "displayMode": "list" }
+      }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Timeout Conexão DB (erros 503)",
+      "description": "HTTP 503 = backend retornou erro de banco (pool esgotado, timeout, SSL)",
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(techstock_http_requests_total{status=\"503\"}[5m])",
+          "refId": "A",
+          "legendFormat": "Erros 503"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi" },
+        "legend": { "displayMode": "list" }
+      }
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Throughput Total (req/min)",
+      "description": "Requisições por minuto — reflete a carga no banco de dados",
+      "gridPos": { "x": 0, "y": 14, "w": 24, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum(rate(techstock_http_requests_total[1m])) * 60",
+          "refId": "A",
+          "legendFormat": "Total req/min"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": { "mode": "multi" },
+        "legend": { "displayMode": "list" }
+      }
+    }
+  ],
+  "schemaVersion": 27,
+  "version": 1
+}
