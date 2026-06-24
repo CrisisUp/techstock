@@ -44,7 +44,7 @@
       - [4. Observabilidade](#4-observabilidade)
       - [5. RDS - PostgreSQL](#5-rds---postgresql)
     - [🔧 Desenvolvimento](#-desenvolvimento)
-    - [Use Live Server no Visual Studio Code](#use-live-server-no-vs-code)
+    - [Use Live Server no Visual Studio Code](#use-live-server-no-visual-studio-code)
       - [Ou sirva com Python](#ou-sirva-com-python)
     - [📚 API Endpoints](#-api-endpoints)
       - [📦 Produtos](#-produtos)
@@ -63,7 +63,6 @@
     - [📄 Licença](#-licença)
     - [👥 Autor](#-autor)
   - [🙏 Agradecimentos](#-agradecimentos)
-  - [Adicionar ao Git](#adicionar-ao-git)
 
 ---
 
@@ -470,11 +469,3 @@ Este projeto está sob a licença MIT. Veja o arquivo LICENSE para mais detalhes
 **⭐ Se este projeto te ajudou, considere dar uma estrela no GitHub!**
 
 *Feito com ❤️ para controle de estoque eficiente.*
-
-## Adicionar ao Git
-
-  ```bash
-  git add README.md
-  git commit -m "📝 Adiciona README.md completo e bonitão"
-  git push origin main
-  ```
