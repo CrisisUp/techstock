@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "no-todo": true,
+    "terminology": {
+      "defaultTerms": true
+    }
+  }
+}
